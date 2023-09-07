@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Reminder</title>
+    <meta content="text/html" http-equiv="Content-Type"/>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" rel="stylesheet">
+</head>
+<body style="min-height: 100vh;margin: 0 !important; padding: 0 !important;
+background-color: white">
+<div class="row" style="padding-top: 25px">
+    <div class="card col-xs-12 offset-xs-0 col-md-4 offset-md-4">
+        <div class="card-body">
+            <div>
+                <h1 class="card-title" style="padding-left: 10px;">Upcoming Event</h1>
+            </div>
+            <div>
+                <p style="color: #000000 !important; padding-left: 10px;">Dear <b th:text="${invitee}"></b>, you have an
+                    upcoming event starting in <b th:text="${startingInHours}"></b> hours.
+                <p style="color: #000000 !important; padding-left: 10px;">
+                    Event time: <b th:text="${time}"></b>
+                    <br>
+                    Event location: <b th:text="${location}"></b>
+                </p>
+                <p style="color: #000000 !important; padding-left: 10px;">
+                    Best Regards,<br>
+                    Social Network Team
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
