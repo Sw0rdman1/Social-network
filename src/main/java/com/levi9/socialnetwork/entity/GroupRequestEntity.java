@@ -1,11 +1,12 @@
-/**
- * Predstavlja entitet zahteva za pridruživanje grupi u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+
+/**
+ * Predstavlja entitet zahteva za pridruživanje grupi u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "group_request")
 @NoArgsConstructor

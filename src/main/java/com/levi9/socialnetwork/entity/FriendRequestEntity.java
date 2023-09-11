@@ -1,6 +1,3 @@
-/**
- * Predstavlja entitet zahteva za prijateljstvo između korisnika u aplikaciji.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
@@ -9,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Predstavlja entitet zahteva za prijateljstvo između korisnika u aplikaciji.
+ */
 @Entity
 @Table(name = "friend_request")
 @NoArgsConstructor

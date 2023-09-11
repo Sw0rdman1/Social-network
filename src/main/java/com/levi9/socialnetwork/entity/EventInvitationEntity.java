@@ -1,11 +1,12 @@
-/**
- * Predstavlja entitet poziva na događaj u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+
+/**
+ * Predstavlja entitet poziva na događaj u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "event_invitation")
 @NoArgsConstructor

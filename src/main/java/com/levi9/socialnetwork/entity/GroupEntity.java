@@ -2,6 +2,8 @@ package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+
 /**
  * Predstavlja entitet društvene grupe u aplikaciji.
  */

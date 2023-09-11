@@ -55,4 +55,14 @@ public class EventEntity {
         }
         this.dateTime = dateTime;
     }
+
+    @Override
+    public String toString() {
+        return "EventEntity{" +
+                "id=" + id +
+                ", dateTime=" + dateTime +
+                ", location='" + location + '\'' +
+                ", group=" + group.getName() +
+                '}';
+    }
 }
