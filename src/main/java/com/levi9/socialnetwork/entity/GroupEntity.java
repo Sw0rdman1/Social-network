@@ -1,11 +1,10 @@
-/**
- * Predstavlja entitet društvene grupe u aplikaciji.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+/**
+ * Predstavlja entitet društvene grupe u aplikaciji.
+ */
 @Entity
 @Table(name = "social_group")
 @NoArgsConstructor
@@ -13,6 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 public class GroupEntity {
 
     /**
@@ -28,6 +28,13 @@ public class GroupEntity {
      */
     @Column(unique = true, nullable = false)
     private String name;
+
+    public void setName(String name) {
+        if (name.length() < 2) {
+            throw new IllegalArgumentException("Name must be at least 2 characters long");
+        }
+        this.name = name;
+    }
 
     /**
      * Logicka promenljiva koja označava da li je grupa privatna ili javna.

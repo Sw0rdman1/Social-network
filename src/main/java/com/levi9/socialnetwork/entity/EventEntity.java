@@ -1,12 +1,12 @@
-/**
- * Predstavlja entitet događaja u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+/**
+ * Predstavlja entitet događaja u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "event")
 @NoArgsConstructor
@@ -48,4 +48,11 @@ public class EventEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private GroupMemberEntity creator;
+
+    public void setDateTime(LocalDateTime dateTime) {
+        if (dateTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Date must be in future");
+        }
+        this.dateTime = dateTime;
+    }
 }

@@ -13,6 +13,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @Builder
+@ToString
 public class GroupRequestEntity {
 
     /**
@@ -55,4 +56,15 @@ public class GroupRequestEntity {
      */
     @Column(name = "request_counter")
     private Integer requestCounter;
+
+    public void setRequestCounter(Integer requestCounter) {
+        if (requestCounter == null) {
+            throw new IllegalArgumentException("Request counter cannot be null");
+        }
+
+        if (requestCounter < 0  || requestCounter > 3) {
+            throw new IllegalArgumentException("Request counter must be number between 0 and 3");
+        }
+        this.requestCounter = requestCounter;
+    }
 }

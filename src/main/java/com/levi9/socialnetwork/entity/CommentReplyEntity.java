@@ -1,6 +1,4 @@
-/**
- * Predstavlja entitet odgovora na komentar u aplikaciji društvene mreže.
- */
+
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
@@ -9,6 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
+
+/**
+ * Predstavlja entitet odgovora na komentar u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "comment_reply")
 @Getter
@@ -48,4 +50,22 @@ public class CommentReplyEntity {
      */
     @Column(name = "date_created")
     private LocalDateTime dateTimeCreated;
+
+    public void setText(String text) {
+        if (text.length() < 3) {
+            throw new IllegalArgumentException("Comment reply should be at least 3 characters long");
+        }
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "CommentReplyEntity{" +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                ", comment=" + comment.getText() +
+                ", creator=" + creator.getUsername() +
+                ", dateTimeCreated=" + dateTimeCreated +
+                '}';
+    }
 }
