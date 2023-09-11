@@ -1,18 +1,20 @@
-/**
- * Predstavlja entitet zahteva za prijateljstvo između korisnika u aplikaciji.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+/**
+ * Predstavlja entitet zahteva za prijateljstvo između korisnika u aplikaciji.
+ */
 @Entity
 @Table(name = "friend_request")
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class FriendRequestEntity {
 
     /**
@@ -49,4 +51,11 @@ public class FriendRequestEntity {
      */
     @Column(name="request_counter")
     private Integer requestCounter;
+
+    public void setRequestCounter(Integer requestCounter) {
+        if (requestCounter < 0  || requestCounter > 3) {
+            throw new IllegalArgumentException("Request counter must be number between 0 and 3");
+        }
+        this.requestCounter = requestCounter;
+    }
 }

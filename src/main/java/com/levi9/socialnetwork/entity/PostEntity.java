@@ -1,12 +1,13 @@
-/**
- * Predstavlja entitet posta u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+
+/**
+ * Predstavlja entitet posta u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "post")
 @Getter
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@ToString
 public class PostEntity {
 
     /**
@@ -62,4 +62,33 @@ public class PostEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private UserEntity creator;
+
+    public void setText(String text) {
+        if (text.length() < 10) {
+            throw new IllegalArgumentException("Post should be at least 10 characters long");
+        }
+        this.text = text;
+    }
+
+    public void setDateTimeCreated(LocalDateTime dateTimeCreated) {
+        if (dateTimeCreated.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Date must be in past");
+        }
+        this.dateTimeCreated = dateTimeCreated;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "PostEntity{" +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                ", dateTimeCreated=" + dateTimeCreated +
+                ", closed=" + closed +
+                ", deleted=" + deleted +
+                ", group=" + group.getName() +
+                ", creator=" + creator.getUsername() +
+                '}';
+    }
 }

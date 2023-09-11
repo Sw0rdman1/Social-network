@@ -1,11 +1,12 @@
-/**
- * Predstavlja entitet poziva na događaj u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+
+/**
+ * Predstavlja entitet poziva na događaj u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "event_invitation")
 @NoArgsConstructor
@@ -41,4 +42,14 @@ public class EventInvitationEntity {
     @Column(columnDefinition = "ENUM('NOT_COMING', 'COMING')")
     @Enumerated(EnumType.STRING)
     private EventInvitationStatusEntity status;
+
+    @Override
+    public String toString() {
+        return "EventInvitationEntity{" +
+                "id=" + id +
+                ", invitee=" + invitee.getMember().getUsername() +
+                ", event=" + event.getId() +
+                ", status=" + status +
+                '}';
+    }
 }

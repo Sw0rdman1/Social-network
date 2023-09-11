@@ -1,11 +1,12 @@
-/**
- * Predstavlja entitet koji označava postove koji su skriveni od određenih korisnika u aplikaciji.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
+
+/**
+ * Predstavlja entitet koji označava postove koji su skriveni od određenih korisnika u aplikaciji.
+ */
 @Entity
 @Table(name = "post_hidden_from")
 @NoArgsConstructor
@@ -35,4 +36,13 @@ public class PostHiddenFromEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private PostEntity post;
+
+    @Override
+    public String toString() {
+        return "PostHiddenFromEntity{" +
+                "id=" + id +
+                ", user=" + user.getUsername() +
+                ", post=" + post.getId() +
+                '}';
+    }
 }

@@ -1,8 +1,3 @@
-/**
- * Predstavlja entitet korisnika u aplikaciji.
- * Ova klasa je entitet koji je mapiran na tabelu "user" u bazi podataka.
- * Implementira UserDetails interfejs kako bi obezbedila detalje korisnika za Spring Security.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.Column;
@@ -15,6 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+
+/**
+ * Predstavlja entitet korisnika u aplikaciji.
+ * Ova klasa je entitet koji je mapiran na tabelu "user" u bazi podataka.
+ * Implementira UserDetails interfejs kako bi obezbedila detalje korisnika za Spring Security.
+ */
 @Entity
 @Table(name = "user")
 @Getter
@@ -121,5 +122,27 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+
+    public void setUsername(String username) {
+        if (username.length() < 3) {
+            throw new IllegalArgumentException("Username should be at least 3 characters long");
+        }
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        if (email.length() < 10 || !email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password should be at least 8 characters long");
+        }
+        this.password = password;
     }
 }

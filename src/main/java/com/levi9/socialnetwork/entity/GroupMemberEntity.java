@@ -1,12 +1,12 @@
-/**
- * Predstavlja entitet člana grupe u aplikaciji društvene mreže.
- */
 package com.levi9.socialnetwork.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+/**
+ * Predstavlja entitet člana grupe u aplikaciji društvene mreže.
+ */
 @Entity
 @Table(name = "group_member")
 @NoArgsConstructor
@@ -42,4 +42,21 @@ public class GroupMemberEntity {
      */
     @Column(name = "date_joined")
     private LocalDateTime dateTimeJoined;
+
+    public void setDateTimeJoined(LocalDateTime dateTimeJoined) {
+        if (dateTimeJoined.isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Date must be in past");
+        }
+        this.dateTimeJoined = dateTimeJoined;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupMemberEntity{" +
+                "id=" + id +
+                ", member=" + member.getUsername() +
+                ", group=" + group.getName() +
+                ", dateTimeJoined=" + dateTimeJoined +
+                '}';
+    }
 }
