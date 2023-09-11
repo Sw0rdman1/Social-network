@@ -42,4 +42,14 @@ public class EventInvitationEntity {
     @Column(columnDefinition = "ENUM('NOT_COMING', 'COMING')")
     @Enumerated(EnumType.STRING)
     private EventInvitationStatusEntity status;
+
+    @Override
+    public String toString() {
+        return "EventInvitationEntity{" +
+                "id=" + id +
+                ", invitee=" + invitee.getMember().getUsername() +
+                ", event=" + event.getId() +
+                ", status=" + status +
+                '}';
+    }
 }
