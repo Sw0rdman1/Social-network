@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
      * @throws PostException ako je post istekao nakon 24 casa od njegovog kreiranja
      * */
     @Override
-    public CommentResponse createComment(CommentRequest commentRequest, Long postID) {
+    public CommentEntity createComment(CommentRequest commentRequest, Long postID) {
         if (commentRequest.text().isBlank()) {
             throw new EmptyCommentException(GenericMessages.ERROR_MESSAGE_EMPTY_COMMENT);
         }
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
                 .creator(user)
                 .build();
 
-        return commentMapper.mapCommentEntityToCommentResponse(saveComment(newComment));
+        return saveComment(newComment);
     }
 
 
@@ -79,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
      * Proverava da li user ima pristup grupi
      * @throws EntityNotFoundException ako user nije clan grrupe u kojoj zeli ostaviti komentar
      */
-    private void checkGroupCredentials(GroupEntity group, UserEntity user) {
+    public void checkGroupCredentials(GroupEntity group, UserEntity user) {
         if (group != null) {
             groupMemberRepository.findByMemberAndGroup(user, group).
                     orElseThrow(() -> new EntityNotFoundException
@@ -91,7 +91,7 @@ public class CommentServiceImpl implements CommentService {
      * Proverava da li user moze videti post
      * @throws EntityNotFoundException ako user ne moze videti posti na koji zeli ostaviti komentar
      */
-    private void checkPostPrivacy(PostEntity post, UserEntity user) {
+    public void checkPostPrivacy(PostEntity post, UserEntity user) {
         if (post.isClosed() && !post.getCreator().getId().equals(user.getId())) {
             friendshipRepository.findByPairOfIds(user.getId(), post.getCreator().getId()).
                     orElseThrow(() -> new EntityNotFoundException
