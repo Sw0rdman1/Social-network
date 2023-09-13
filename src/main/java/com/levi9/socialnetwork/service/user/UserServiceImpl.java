@@ -21,6 +21,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
 
+    /**
+     *
+     * @param user Entitet korisnika koji se čuva ili ažurira.
+     * @return sacuvani korisnik
+     */
     @Override
     public UserEntity save(UserEntity user) {
         return userRepository.save(user);
@@ -32,6 +37,12 @@ public class UserServiceImpl implements UserService {
                 orElse(null);
     }
 
+    /**
+     * @throws EntityNotFoundException ako korisnik ne postoji
+     *
+     * @param id ID korisnika.
+     * @return korisnik kome odgovara uneti ID
+     */
     @Override
     public UserEntity findById(String id) {
         return userRepository.findById(id).
@@ -39,6 +50,12 @@ public class UserServiceImpl implements UserService {
                         "User with ID: " + id + " not found"));
     }
 
+    /**
+     * @throws EntityNotFoundException ako korisnik ne postoji
+     *
+     * @param username Korisničko ime korisnika.
+     * @return korisnik kome odgovara uneto korisnicko ime
+     */
     @Override
     public UserEntity findByUsername(String username) {
         return userRepository.findByUsername(username).
@@ -46,6 +63,11 @@ public class UserServiceImpl implements UserService {
                         "User with username: " + username + " not found"));
     }
 
+    /**
+     *
+     * @param searchCriteria Kriterijum pretrage za korisnička imena.
+     * @return list korisnika cije korisnicko ime pocinje sa unetim karakterima
+     */
     @Override
     public List<UserResponse> findUsersByUsernameContaining(String searchCriteria) {
         UserEntity currentUser = findById(AuthUtil.getPrincipalId());
@@ -60,6 +82,11 @@ public class UserServiceImpl implements UserService {
         }).toList();
     }
 
+    /**
+     * @param currentUserFriends Lista ID-eva prijatelja trenutnog korisnika.
+     * @param otherUserID       ID drugog korisnika.
+     * @return listu ID-ijeva svih zajednickih prijatelja ulogovanog korisnika i korisnika ciji ID prosledjujemo
+     */
     @Override
     public List<String> findMutualFriends(List<String> currentUserFriends, String otherUserID) {
         List<String> response = friendshipRepository.findUserFriendsEmails(otherUserID);

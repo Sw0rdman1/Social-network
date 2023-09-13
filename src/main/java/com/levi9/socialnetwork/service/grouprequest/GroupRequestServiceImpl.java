@@ -32,6 +32,15 @@ public class GroupRequestServiceImpl implements GroupRequestService {
     private final GroupRequestRepository groupRequestRepository;
     private final GroupRequestMapper groupRequestMapper;
 
+
+    /**
+     * @throws GroupRequestException ako korisnik koji salje zahtev nije admin grupe ili je korisnik kome se salje zahtev vec clan grupe
+     * @throws FriendRequestException ako je admin vec poslao zahtev tom korisniku ili je to uradio tri puta a on ga odbio
+     *
+     * @param username Korisničko ime korisnika koji šalje zahtev.
+     * @param groupId  ID grupe kojoj se šalje zahtev.
+     * @return  zahtev koji je poslat korisniku
+     */
     @Override
     public GroupRequestResponse sendGroupRequestToUser(String username, Long groupId) {
         UserEntity user = userService.findByUsername(username);
@@ -86,6 +95,15 @@ public class GroupRequestServiceImpl implements GroupRequestService {
         }
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako grupa ne postoji
+     * @throws GroupRequestException ako korisnik koji salje zahtevnije ulogovani korisnik
+     * @throws FriendRequestException ako je korisnik vec poslao zahtev za uclanjenje u grupu ili je to uradio tri puta a admin ga odbio
+     *
+     * @param groupId  ID grupe kojoj se šalje zahtev.
+     * @return  zahtev koji je poslat korisniku
+     */
     @Override
     public GroupRequestResponse sendRequestToJoinGroup(Long groupId) {
         UserEntity currentUser = userService.findById(AuthUtil.getPrincipalId());
@@ -156,6 +174,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
         }
     }
 
+    /**
+     *
+     * @param user korisnik kome se salje zahtev
+     * @param group grupa za koju se salje zahtev
+     * @param isAdmin boolean vrednost da li admin salje zahtev ili korisnik
+     * @return objekat koji ppredstavlja zahtev za uclanjenje
+     */
     private GroupRequestResponse saveGroupRequest(UserEntity user, GroupEntity group, boolean isAdmin) {
         GroupRequestEntity groupRequest = GroupRequestEntity.builder()
                 .user(user)
@@ -171,6 +196,13 @@ public class GroupRequestServiceImpl implements GroupRequestService {
     }
 
 
+    /**
+     * @throws EntityNotFoundException ako zahtev ne postoji
+     *
+     * @param user  Korisnik koji je poslao zahtev.
+     * @param group Grupa kojoj je zahtev upućen.
+     * @return objekat koji vezuje korisnika i grupu
+     */
     @Override
     public GroupRequestEntity findByUserAndGroup(UserEntity user, GroupEntity group) {
         return groupRequestRepository.findByUserAndGroup(user, group)
@@ -178,6 +210,12 @@ public class GroupRequestServiceImpl implements GroupRequestService {
                         user.getUsername(), group.getName())));
     }
 
+    /**
+     * @throws GroupRequestException ako korisnik nije admin grupe za koju trazi zahteve
+     *
+     * @param groupId ID grupe za koju se traže zahtevi.
+     * @return svi zahtevi koji su vezani za odredjenu grupu
+     */
     @Override
     public List<GroupRequestResponse> finAllGroupRequestsByGroupId(Long groupId) {
         GroupEntity group = groupService.findById(groupId);
@@ -194,6 +232,12 @@ public class GroupRequestServiceImpl implements GroupRequestService {
                 .toList();
     }
 
+    /**
+     * @throws EntityNotFoundException ako zahtev ne postoji
+     *
+     * @param id ID zahteva za pridruživanje.
+     * @return objekat zahteva na osnovu njegovog ID-a
+     */
     @Override
     public GroupRequestEntity findById(Long id) {
         return groupRequestRepository.findById(id)
@@ -201,11 +245,18 @@ public class GroupRequestServiceImpl implements GroupRequestService {
                         .format(GenericMessages.ERROR_MESSAGE_GROUP_REQUEST_NOT_FOUND, id)));
     }
 
+
     @Override
     public void delete(GroupRequestEntity entity) {
         groupRequestRepository.delete(entity);
     }
 
+    /**
+     * @throws GroupRequestException ako korisnik nije admin grupe
+     *
+     * @param requestId ID zahteva za pridruživanje koji se odbacuje.
+     * @return zahtev koji je odbijen i brojac povecan za 1
+     */
     @Override
     public GroupRequestEntity adminChangeRequestToRejected(Long requestId) {
         GroupRequestEntity request = findById(requestId);
@@ -216,6 +267,12 @@ public class GroupRequestServiceImpl implements GroupRequestService {
         return changeRequestToRejected(request);
     }
 
+    /**
+     * @throws GroupRequestException ako ulogovani korisnik nije onaj kome je zahtev poslat
+     *
+     * @param requestId ID zahteva za pridruživanje koji se odbacuje.
+     * @return zahtev koji je odbijen i brojac povecan za 1
+     */
     @Override
     public GroupRequestEntity userChangeRequestToRejected(Long requestId) {
         GroupRequestEntity request = findById(requestId);
@@ -225,6 +282,11 @@ public class GroupRequestServiceImpl implements GroupRequestService {
         return changeRequestToRejected(request);
     }
 
+    /**
+     *
+     * @param request Entitet zahteva za pridruživanje koji se odbacuje.
+     * @return izmenjeni objekat zahteva
+     */
     @Override
     public GroupRequestEntity changeRequestToRejected(GroupRequestEntity request) {
         request.setStatus(RequestStatusEntity.REJECTED);
@@ -232,6 +294,10 @@ public class GroupRequestServiceImpl implements GroupRequestService {
         return request;
     }
 
+    /**
+     *
+     * @return listu svih zahteva vezanih za ulogovanog korisnika
+     */
     @Override
     public List<GroupRequestResponse> findByUserId() {
         UserEntity user = userService.findById(AuthUtil.getPrincipalId());
