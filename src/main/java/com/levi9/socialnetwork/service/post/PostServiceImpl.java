@@ -52,6 +52,13 @@ public class PostServiceImpl implements PostService {
     private final GroupMemberRepository groupMemberRepository;
     private final MailServiceImpl emailService;
 
+
+    /**
+     * @throws EmptyPostException ako je tekst posta prazan string
+     *
+     * @param postRequest Zahtev za kreiranje objave.
+     * @return objekat posta koji je kreiran
+     */
     @Override
     public PostEntity createPost(PostRequest postRequest) {
 
@@ -74,6 +81,14 @@ public class PostServiceImpl implements PostService {
         return savePost(newPost);
     }
 
+    /**
+     * @throws EmptyPostException ako je tekst posta prazan string
+     * @throws PostNoPermissionException ako korisnik nije clan grupe u kojoj zeli objaviti post
+     *
+     * @param postRequest Zahtev za kreiranje objave.
+     * @param groupID     ID grupe u kojoj se kreira objava.
+     * @return objekat posta koji je kreiran
+     */
     @Override
     public PostResponse createPostInGroup(PostRequest postRequest, Long groupID) {
         if (postRequest.getText().isBlank()) {
@@ -101,6 +116,14 @@ public class PostServiceImpl implements PostService {
 
         return postMapper.toPostResponse(savedPost);
     }
+
+    /**
+     *
+     * @param userEmails email korisnika kome se salje obavestenje
+     * @param subject tema maila
+     * @param body telo maila
+     * @param currentUser ulogovani korisnik
+     */
     private void sendNotification(List<String> userEmails, String subject, String body, UserEntity currentUser) {
         userEmails.forEach((email) -> {
             if (!email.equals(currentUser.getEmail())) {
@@ -109,11 +132,22 @@ public class PostServiceImpl implements PostService {
         });
     }
 
+    /**
+     * @param post Objava koja se čuva.
+     * @return post koji je sacuvan
+     */
     @Override
     public PostEntity savePost(PostEntity post) {
         return postRepository.save(post);
     }
 
+    /**
+     * @throws EntityNotFoundException ako objava ne postoji
+     * @throws PostException ako je post izbrisan ili nije kreiran od strane korisnika
+     *
+     * @param postModificationRequest Zahtev za izmenu objave.
+     * @return izmenjenu objavu
+     */
     @Override
     public PostEntity updatePost(PostModificationRequest postModificationRequest) {
 
@@ -136,6 +170,13 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post);
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako objava ne postoji
+     * @throws PostNoPermissionException ako korisnik nema dozvolu da obrise objavu
+     *
+     * @param postID ID objave koja se briše.
+     */
     @Override
     public void deletePost(Long postID) {
         String currentUser = AuthUtil.getPrincipalUsername();
@@ -150,11 +191,22 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    /**
+     * Ako je njegov kreator ili je admin grupe u kojoj je post objavljen vrednost je true
+     *
+     * @param username korisnicko ime
+     * @param post objava
+     * @return boolean vrednost da li korisnik ima kredencijale da obrise objavu
+     */
     private boolean checkIfUserHavePermission(String username, PostEntity post) {
         return (post.getCreator().getUsername().equals(username) ||
                 (post.getGroup() != null && post.getGroup().getAdmin().getUsername().equals(username)));
     }
 
+    /**
+     *
+     * @return listu postova koje ulogovani korisnik vidi
+     */
     @Override
     public List<PostResponse> getFeedPosts() {
         String loggedUserId = AuthUtil.getPrincipalId();
@@ -166,6 +218,12 @@ public class PostServiceImpl implements PostService {
         return feed.stream().map(postMapper::toPostResponse).toList();
     }
 
+    /**
+     * @throws EntityNotFoundException ako korisnik sa unetim imenom ne postoji
+     *
+     * @param profileUsername Korisničko ime profila čije se objave dohvataju.
+     * @return svih objava koje je neki korisnik objavio
+     */
     @Override
     public List<PostResponse> getUsersProfilePosts(String profileUsername) {
         String loggedUserId = AuthUtil.getPrincipalId();
@@ -192,6 +250,14 @@ public class PostServiceImpl implements PostService {
         return feed.map(postEntities -> postEntities.stream().map(postMapper::toPostResponse).toList()).orElse(null);
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako objava ne postoji ili korisnik od koga sakiravamo ne postoji
+     * @throws PostException ako je objava izbrisana ili ulogovani korisnik nije njen kreator,objava nije u grupi, sakrivamo sami od sebe, nismo prijatelj sa korisnikom ili smo vec sakrili od njega
+     *
+     * @param hiddenPostRequest Zahtev za skrivanje objave.
+     * @return String sa porukom o uspesnom sakrivanju posta
+     */
         @Transactional
         @Override
         public String hidePostFromUsers(HiddenPostRequest hiddenPostRequest) {
@@ -243,6 +309,13 @@ public class PostServiceImpl implements PostService {
             return GenericMessages.SUCCESS_MESSAGE_POST_HIDDEN;
         }
 
+    /**
+     * @throws EntityNotFoundException ako objava ne postoji ili korisnik od koga sakiravamo ne postoji
+     * @throws PostException ako je objava izbrisana ili ulogovani korisnik nije njen kreator,objava nije u grupi, sakrivamo sami od sebe, nismo prijatelj sa korisnikom ili objava nije skrivena od njega
+     *
+     * @param hiddenPostRequest Zahtev za ponovno prikazivanje objave.
+     * @return String sa porukom o uspesnom brisanju sakrivanja od korisnika
+     */
     @Transactional
     @Override
     public String unhidePostFromUsers(HiddenPostRequest hiddenPostRequest) {

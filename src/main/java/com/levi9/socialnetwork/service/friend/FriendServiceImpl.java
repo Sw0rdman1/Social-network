@@ -19,6 +19,11 @@ public class FriendServiceImpl implements FriendService {
 
     private FriendshipRepository friendshipRepository;
 
+
+    /**
+     * @throws  EntityNotFoundException ako ne postoji logovani korisnik ili username koje je prosledjen ne pripada nijednom korisniku ili korsnici nisu prijatelji
+     *
+     */
     @Override
     public void remove(String userToBeDeleted) {
 

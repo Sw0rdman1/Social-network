@@ -21,6 +21,11 @@ public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     private final ITemplateEngine thymeleafTemplateEngine;
 
+
+    /**
+     *
+     * @throws MessagingException ako se desi greska prilikom slanja mejla.
+     */
     @Override
     public void sendEventReminder(EventInvitationEntity eventInvitation) {
         Context context = new Context();
@@ -43,6 +48,10 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     *
+     * @throws MessagingException ako se desi greska prilikom slanja mejla.
+     */
     @Override
     public void sendEventNotification(EventInvitationEntity eventInvitation) {
         Context context = new Context();

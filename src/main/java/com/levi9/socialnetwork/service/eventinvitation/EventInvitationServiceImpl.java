@@ -34,6 +34,13 @@ public class EventInvitationServiceImpl implements EventInvitationService {
     private final EmailService emailService;
     private final GroupMemberService groupMemberService;
 
+
+    /**
+     * @return odgovor na prihacenu pozivnicu za dogadjaj
+     *
+     * @throws EventInvitationException ako korisnik koji je ulogovan nije onaj za koga je pozivnica ili ako je ono nju vec prihvatio ili je manje od 24 casa do dogadjaja
+     *
+     */
     @Override
     public EventInvitationResponse acceptEventInvitation(Long invitationId) {
         EventInvitationEntity eventInvitation = findById(invitationId);
@@ -57,6 +64,11 @@ public class EventInvitationServiceImpl implements EventInvitationService {
         return eventInvitationMapper.mapEventInvitationEntityToEventInvitationResponse(confirmedEventInvitation);
     }
 
+    /**
+     *
+     * @return samu pozivnicu na osnovu njenog ID-a
+     * @throws  EntityNotFoundException ako pozivnica sa tim ID-ijem ne postoji
+     */
     @Override
     public EventInvitationEntity findById(Long id) {
         return eventInvitationRepository
@@ -65,6 +77,10 @@ public class EventInvitationServiceImpl implements EventInvitationService {
                         .format(GenericMessages.ERROR_MESSAGE_EVENT_INVITATION_NOT_FOUND, id)));
     }
 
+
+    /**
+     * Proverava za koje dogadjaje se salju podsednici
+     */
     @Scheduled(fixedRate = 60000)
     public void sendReminders() {
         LocalDateTime now = LocalDateTime.now();
@@ -76,6 +92,11 @@ public class EventInvitationServiceImpl implements EventInvitationService {
                         .forEach(emailService::sendEventReminder));
     }
 
+    /**
+     *
+     * @param event Objekat tipa EventEntity koji predstavlja događaj za koji se šalju pozivnice.
+     * @return listu svih poslatih pozivnica
+     */
     @Transactional
     @Override
     public List<EventInvitationEntity> sendEventInvitations(EventEntity event) {
@@ -93,6 +114,12 @@ public class EventInvitationServiceImpl implements EventInvitationService {
                 .toList();
     }
 
+    /**
+     * Kireanje pozivnice za dogadjaj
+     * @param member caln kome se pozivnica salje
+     * @param event dogadjaj za koje se salje pozivnica
+     * @return sama pozivnica koja je kreirana
+     */
     private EventInvitationEntity createEventInvitation(GroupMemberEntity member, EventEntity event) {
         EventInvitationEntity eventInvitation = EventInvitationEntity.builder()
                 .invitee(member)

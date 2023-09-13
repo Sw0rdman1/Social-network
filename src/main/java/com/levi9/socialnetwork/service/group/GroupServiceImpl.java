@@ -39,11 +39,24 @@ public class GroupServiceImpl implements GroupService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
 
+
+    /**
+     * @throws EntityNotFoundException ako grupa sa unetim imenom ne postoji
+     *
+     * @param groupName Ime grupe koja se traži.
+     * @return grupa koja je nadjena na osnovu imena
+     */
     @Override
     public GroupEntity findByName(String groupName) {
         return groupRepository.findByName(groupName).orElseThrow(() -> new EntityNotFoundException(String.format(GenericMessages.ERROR_MESSAGE_GROUP_NOT_FOUND_BY_NAME, groupName)));
     }
 
+    /**
+     * @throws EntityNotFoundException ako grupa u koju zelimo uci ne postoji ili  nije otvorena
+     * @throws GroupException ako smo vec clan te grupe
+     *
+     * @param groupId Identifikator javne grupe kojoj se pridružuje korisnik.
+     */
     @Override
     public void joinPublicGroup(int groupId) {
         GroupEntity targetGroup = groupRepository.findById(Long.valueOf(groupId)).orElseThrow(() -> new EntityNotFoundException(GenericMessages.ERROR_MESSAGE_GROUP_NOT_FOUND));
@@ -66,6 +79,12 @@ public class GroupServiceImpl implements GroupService {
         groupMemberRepository.save(groupMember);
     }
 
+    /**
+     * @throws EntityNotFoundException ako grupa ne postoji ili nismo njen clan ili nema objava u toj grupi
+     *
+     * @param groupId Identifikator grupe za koju se prikazuju postovi.
+     * @return sve objave iz te grupe
+     */
     @Override
     public List<PostResponse> showPostsInGroup(int groupId) {
         GroupEntity target = groupRepository.findById(Long.valueOf(groupId)).orElseThrow(() -> new EntityNotFoundException(GenericMessages.ERROR_MESSAGE_GROUP_NOT_FOUND));
@@ -83,6 +102,13 @@ public class GroupServiceImpl implements GroupService {
         return responses;
     }
 
+    /**
+     * @throws EntityNotFoundException ako taj korisnik ne postoji ili sama grupa ne postoji ili korisnik nije uopste clan te grupe
+     * @throws GroupRequestException ako korisnik koji zeli zibaciti drugog nije admin grupe ili ako je admin a zeli samog sebe izbaciti
+     *
+     * @param groupId        Identifikator grupe iz koje se uklanja član.
+     * @param userToBeRemoved Korisničko ime korisnika koji se uklanja iz grupe.
+     */
     @Override
     public void removeMember(int groupId, String userToBeRemoved) {
         UserEntity userRemove = userRepository.findByUsername(userToBeRemoved).orElseThrow(() -> new EntityNotFoundException(String.format(GenericMessages.ERROR_MESSAGE_USER_NOT_FOUND,userToBeRemoved)));
@@ -101,10 +127,23 @@ public class GroupServiceImpl implements GroupService {
         groupMemberRepository.delete(groupMemberEntity);
     }
 
+    /**
+     *
+     * @param groupName ime grupe
+     * @return boolean vrednost da li grupa sa unetim imenom postoji
+     */
     private boolean groupExists(String groupName) {
         return groupRepository.findByName(groupName).isPresent();
     }
 
+
+    /**
+     * @throws GroupRequestException ako grupa sa unetim imenom postoji
+     *
+     * @param groupName Ime nove grupe.
+     * @param closed    Status zatvorenosti grupe (true ako je zatvorena, false inače).
+     * @return grupu koja je kreirana
+     */
     @Override
     @Transactional
     public GroupResponse createGroup(String groupName, boolean closed) {
@@ -131,12 +170,23 @@ public class GroupServiceImpl implements GroupService {
         return groupMapper.mapGroupEntityToGroupResponse(group);
     }
 
+    /**
+     * @throws EntityNotFoundException ako grupa sa unetimID-ijem ne postoji
+     *
+     * @param id Identifikator grupe koja se traži.
+     * @return objekat grupe
+     */
     @Override
     public GroupEntity findById(Long id) {
         return groupRepository
                 .findById(id).orElseThrow(() -> new EntityNotFoundException("Group with ID: " + id + " not found"));
     }
 
+    /**
+     *
+     * @param searchCriteria Kriterijum pretrage za imena grupa.
+     * @return listu grupa koje odgovaraju kriterijumu pretrage
+     */
     @Override
     public List<GroupResponse> searchGroupsByNameContaining(String searchCriteria) {
         List<GroupEntity> resultGroups = searchCriteria == null ?
@@ -145,6 +195,13 @@ public class GroupServiceImpl implements GroupService {
         return resultGroups.stream().map(groupMapper::mapGroupEntityToGroupResponse).toList();
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako grupa ne postoji
+     * @throws GroupException ako korisnik koji zeli izbrisati grupu nije admin same grupe
+     *
+     * @param groupName Ime grupe koja se briše.
+     */
     @Override
     public void deleteGroup(String groupName) {
         String loggedUserId = AuthUtil.getPrincipalId();
@@ -156,6 +213,13 @@ public class GroupServiceImpl implements GroupService {
         groupRepository.delete(groupEntity);
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako grupa sa unetim ID-ijem ne postoji ili korisnik nije clan te grupe
+     * @throws IllegalStateException ako je korisnik admin same grupe
+     *
+     * @param groupId Identifikator grupe koju korisnik napušta.
+     */
     @Override
     public void leaveGroup(int groupId) {
         GroupEntity targetGroup = groupRepository

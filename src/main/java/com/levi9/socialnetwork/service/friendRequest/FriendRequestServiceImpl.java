@@ -28,6 +28,16 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     private final FriendshipRepository friendshipRepository;
     private final FriendRequestMapper friendRequestMapper;
 
+
+    /**
+     * Akoo kroisnik kome je stigao zahtev psaolje korisniku od koga je zahtev automatski ce se prihvatiti i postace prjatelji
+     *
+     * @param receiverUsername Korisničko ime korisnika koji će primiti zahtev za prijateljstvo.
+     * @return String koji potvrdjuje da je zahtevv uspesno poslat
+     *
+     * @throws EntityNotFoundException ako korsnik koji salje ili kojem je zahtev poslat ne postoji
+     * @throws  FriendRequestException ako je korisnik sam sebi poslao zahtev ili zahtev vec postoji
+     */
     @Override
     public String createFriendRequest(String receiverUsername) {
 
@@ -84,6 +94,14 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 .toList();
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako korisnik koji salje ili prima zahtev ne postoji
+     * @throws FriendRequestException ako zahtev za prijateljstvo ne postoji
+     *
+     * @param senderUsername Korisničko ime korisnika koji je poslao zahtev za prijateljstvo.
+     * @return String sa porukom o uspesnom prihvatanju zahteva
+     */
     @Override
     public String acceptFriendRequest(String senderUsername) {
 
@@ -110,6 +128,14 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return GenericMessages.SUCCESS_MESSAGE_REQUEST_ACCEPTED;
     }
 
+
+    /**
+     * @throws EntityNotFoundException ako korisnik koji salje ili prima zahtev ne postoji
+     * @throws FriendRequestException ako zahtev za prijateljstvo ne postoji
+     *
+     * @param senderUsername Korisničko ime korisnika koji je poslao zahtev za prijateljstvo.
+     * @return String sa porukom o uspesnom odbijanju zahteva
+     */
     @Override
     public String declineFriendRequest(String senderUsername) {
 
@@ -131,6 +157,12 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return GenericMessages.SUCCESS_MESSAGE_REQUEST_DECLINED;
     }
 
+    /**
+     *
+     * @param senderUsername korisnicko ime onog ko salje zahtev
+     * @param receiverUsername korisnicko ime onog ko prima zahtev
+     * @return boolean vrednost da li je zahtev poslat samom sebi
+     */
     private boolean isSelfFriendRequest(String senderUsername, String receiverUsername) {
         return senderUsername.equals(receiverUsername);
     }
