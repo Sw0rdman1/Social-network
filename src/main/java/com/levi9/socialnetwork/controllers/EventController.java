@@ -28,9 +28,9 @@ public class EventController {
     private final EventMapper eventMapper;
 
     @PostMapping(value = "/{groupId}/event")
-    public ResponseEntity<EventResponse> createEvent(@PathVariable Long groupId,
+    public ResponseEntity<EventEntity> createEvent(@PathVariable Long groupId,
                                                      @RequestBody @Valid EventRequest eventRequest) {
-        EventResponse eventResponse = eventService.createEvent(groupId, eventRequest.getLocation(),
+        EventEntity eventResponse = eventService.createEvent(groupId, eventRequest.getLocation(),
                 eventRequest.getDateTime());
         return new ResponseEntity<>(eventResponse, HttpStatus.CREATED);
     }
@@ -41,9 +41,4 @@ public class EventController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/update/{eventId}")
-    public ResponseEntity<EventResponse> updateEvent(@PathVariable final Long eventId, @RequestBody String newDateTime) {
-        EventEntity updatedEvent = eventService.updateEvent(eventId, newDateTime);
-        return new ResponseEntity<>(eventMapper.mapEventEntityToEventResponse(updatedEvent), HttpStatus.OK);
-    }
 }

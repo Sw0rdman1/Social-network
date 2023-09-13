@@ -17,7 +17,7 @@ public interface CommentService {
      * @param postID         ID posta na koji se komentar odnosi.
      * @return Objekt tipa CommentResponse koji predstavlja novi komentar.
      */
-    CommentResponse createComment(CommentRequest commentRequest, Long postID);
+    CommentEntity createComment(CommentRequest commentRequest, Long postID);
 
     /**
      * Cuva komentar u bazu podataka.
@@ -40,5 +40,4 @@ public interface CommentService {
      * @param commentId ID komentara na koji se odgovara.
      * @param text      Tekst odgovora.
      */
-    void reply(Long commentId, String text);
 }

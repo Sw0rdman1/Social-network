@@ -416,7 +416,7 @@ public class PostServiceImplTest {
     }
 
     @Test
-    @DisplayName("Service should throw exception for trying to update post if you are not creator or admin of group!")
+    @DisplayName("Service should throw exception for trying to delete post if you are not creator or admin of group!")
     public void shouldThrowExceptionForNoPermissionDeletingPost() {
 
         UserEntity user1 = new UserEntity();

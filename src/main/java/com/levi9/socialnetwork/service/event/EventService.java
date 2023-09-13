@@ -26,7 +26,6 @@ public interface EventService {
      * @param newDateTime Novi datum i vreme za događaj.
      * @return Objekat tipa EventEntity koji predstavlja ažurirani događaj.
      */
-    EventEntity updateEvent(Long eventId, String newDateTime);
 
     /**
      * Kreira novi događaj za određenu grupu.
@@ -36,7 +35,7 @@ public interface EventService {
      * @param dateTime  Datum i vreme događaja.
      * @return Objekat tipa EventResponse koji predstavlja novi događaj.
      */
-    EventResponse createEvent(Long groupId, String location, LocalDateTime dateTime);
+    EventEntity createEvent(Long groupId, String location, LocalDateTime dateTime);
 
     /**
      * Briše događaj na osnovu ID-a.
