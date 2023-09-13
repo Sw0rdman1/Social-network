@@ -30,9 +30,4 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/{rootId}/reply")
-    public ResponseEntity<Void> replyToComment(@PathVariable long rootId, @RequestBody ReplyToCommentRequest request) {
-        commentService.reply(rootId, request.getText());
-        return new ResponseEntity<>(CREATED);
-    }
 }

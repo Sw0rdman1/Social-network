@@ -7,6 +7,7 @@ import com.levi9.socialnetwork.entity.GroupEntity;
 import com.levi9.socialnetwork.entity.GroupMemberEntity;
 import com.levi9.socialnetwork.entity.UserEntity;
 import com.levi9.socialnetwork.mapper.EventMapper;
+import com.levi9.socialnetwork.repository.GroupRepository;
 import com.levi9.socialnetwork.response.EventResponse;
 import com.levi9.socialnetwork.service.eventinvitation.EventInvitationService;
 import com.levi9.socialnetwork.service.group.GroupService;
@@ -27,48 +28,18 @@ import java.util.Objects;
 public class EventServiceImpl implements EventService {
     private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm";
     private final EventRepository eventRepository;
-    private final GroupService groupService;
+    private final GroupRepository groupRepository;
     private final UserService userService;
     private final GroupMemberService groupMemberService;
     private final EventMapper eventMapper;
     private final EventInvitationService eventInvitationService;
 
-    @Override
-    public EventEntity updateEvent(Long eventId, String newDateTime) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-            LocalDateTime newEventDateTime = LocalDateTime.parse(newDateTime, formatter);
-
-            if (newEventDateTime.isBefore(LocalDateTime.now())) {
-                throw new IllegalDateTimeException(GenericMessages.ERROR_MESSAGE_UPDATE_EVENT_BEFORE_CURRENT_TIME);
-            }
-
-            EventEntity event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new EntityNotFoundException(String.format
-                            (GenericMessages.ERROR_MESSAGE_EVENT_NOT_FOUND, eventId)));
-
-            if (event.getDateTime().minusHours(3).isBefore(newEventDateTime)) {
-                throw new IllegalDateTimeException(GenericMessages.ERROR_MESSAGE_UPDATE_EVENT_AFTER_NOTIFYING_USERS);
-            }
-
-            UserEntity eventCreator = event.getCreator().getMember();
-            UserEntity groupAdmin = event.getCreator().getGroup().getAdmin();
-            String currentUserId = AuthUtil.getPrincipalId();
-            assert currentUserId != null;
-            if (!currentUserId.equals(eventCreator.getId()) || !currentUserId.equals(groupAdmin.getId())) {
-                throw new PostUpdateIllegalPermissionException(GenericMessages.ERROR_MESSAGE_EVENT_ILLEGAL_PERMISSION);
-            }
-            event.setDateTime(newEventDateTime);
-            return eventRepository.save(event);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalDateTimeException(String.format(GenericMessages.ERROR_MESSAGE_ILLEGAL_DATE_TIME_FORMAT, DATE_TIME_FORMAT));
-        }
-    }
 
     @Transactional
     @Override
-    public EventResponse createEvent(Long groupId, String location, LocalDateTime dateTime) {
-        GroupEntity group = groupService.findById(groupId);
+    public EventEntity createEvent(Long groupId, String location, LocalDateTime dateTime) {
+        GroupEntity group = groupRepository
+                .findById(groupId).orElseThrow(() -> new EntityNotFoundException("Group with ID: " + groupId + " not found"));
         UserEntity loggedInUser = userService.findById(AuthUtil.getPrincipalId());
         GroupMemberEntity creator = getGroupMember(loggedInUser, group);
 
@@ -82,7 +53,7 @@ public class EventServiceImpl implements EventService {
 
         eventInvitationService.sendEventInvitations(event);
 
-        return eventMapper.mapEventEntityToEventResponse(event);
+        return event;
     }
 
     private GroupMemberEntity getGroupMember(UserEntity loggedInUser, GroupEntity group) {

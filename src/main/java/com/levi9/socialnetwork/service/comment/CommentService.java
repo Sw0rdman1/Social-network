@@ -40,5 +40,4 @@ public interface CommentService {
      * @param commentId ID komentara na koji se odgovara.
      * @param text      Tekst odgovora.
      */
-    void reply(Long commentId, String text);
 }
