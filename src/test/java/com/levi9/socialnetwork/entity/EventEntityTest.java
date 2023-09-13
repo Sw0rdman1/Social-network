@@ -63,12 +63,12 @@ public class EventEntityTest {
     @Test
     void testToString() {
         event1.setId(1L);
-        event1.setDateTime(LocalDateTime.of(2023, 9, 12, 14, 30));
+        event1.setDateTime(LocalDateTime.of(2024, 9, 12, 14, 30));
         event1.setLocation("Meeting Room");
         event1.setGroup(new GroupEntity());
         event1.setCreator(new GroupMemberEntity());
 
-        String expected = "EventEntity{id=1, dateTime=2023-09-12T14:30, location='Meeting Room', group=null}";
+        String expected = "EventEntity{id=1, dateTime=2024-09-12T14:30, location='Meeting Room', group=null}";
         assertEquals(expected, event1.toString());
     }
 }
